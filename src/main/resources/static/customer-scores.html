@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Purchased Scores</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .navbar {
+            background-color: #E75480;
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            margin: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #00A478;
+        }
+
+        .nav-links a.active {
+            background-color: #00A478;
+        }
+
+        .logout-btn {
+            background-color: #00A478;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Montserrat';
+        }
+
+        .logout-btn:hover {
+            background-color: #008C66;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .scores-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-message {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .score-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 2rem;
+            background-color: white;
+            transition: transform 0.2s;
+        }
+
+        .score-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-image-container {
+            flex: 0 0 200px;
+        }
+
+        .score-image {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .score-details {
+            flex: 1;
+        }
+
+        .score-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .score-info {
+            margin-bottom: 0.5rem;
+            color: #666;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .score-info strong {
+            min-width: 120px;
+            color: #333;
+        }
+
+        .score-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.2s;
+        }
+
+        .btn-view {
+            background-color: #E75480;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background-color: #D14474;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            margin: 2% auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            overflow: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            color: white;
+            border-radius: 4px;
+            display: none;
+            z-index: 2000;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .toast.success {
+            background-color: #28a745;
+        }
+
+        .toast.error {
+            background-color: #dc3545;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .search-bar {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #E75480;
+            box-shadow: 0 0 0 2px rgba(231, 84, 128, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>MARS : Music Archive and Repository System</h1>
+        <div class="nav-links">
+            <a href="/customer-dashboard.html">Homepage</a>
+            <a href="/customer-scores.html" class="active">My Scores</a>
+            <a href="/customer-profile.html">Manage Profile</a>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="container">
+        <div class="welcome-message">
+            <h2>My Purchased Scores</h2>
+            <p>View and manage your purchased music scores. You can view the score details or remove them from your
+                collection.</p>
+        </div>
+
+        <div class="scores-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search in your scores...">
+            </div>
+            <div id="loading" class="loading">Loading your scores...</div>
+            <div id="scoresContainer"></div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <img id="modalImage" class="modal-image" src="" alt="Score preview">
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        const scoresContainer = document.getElementById('scoresContainer');
+        const searchInput = document.getElementById('searchInput');
+        const loadingDiv = document.getElementById('loading');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const toast = document.getElementById('toast');
+
+        
+        async function loadPurchasedScores() {
+            try {
+                loadingDiv.style.display = 'block';
+                scoresContainer.innerHTML = '';
+
+                const response = await fetch('/api/purchases', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch scores');
+                }
+
+                const scores = await response.json();
+
+                if (scores.length === 0) {
+                    scoresContainer.innerHTML = `
+                        <div class="empty-message">
+                            No purchased scores yet. Visit the homepage to discover and purchase scores!
+                        </div>
+                    `;
+                    return;
+                }
+
+                scores.forEach(score => {
+                    
+                    let filePath;
+                    if (score.files && score.files.length > 0) {
+                        filePath = `/uploads/${score.files[0].filePath}`;
+                    } else if (score.filePath) {
+                        filePath = `/uploads/${score.filePath}`;
+                    } else {
+                        filePath = '/images/placeholder.png';
+                    }
+
+                    const scoreCard = document.createElement('div');
+                    scoreCard.className = 'score-card';
+                    scoreCard.innerHTML = `
+                        <div class="score-image-container">
+                            <img src="${filePath}" 
+                                 alt="${score.title}" 
+                                 class="score-image"
+                                 onerror="this.src='/images/placeholder.png'"
+                                 onclick="showImage('${filePath}', '${score.title}')">
+                        </div>
+                        <div class="score-details">
+                            <div class="score-title">${score.title}</div>
+                            <div class="score-info"><strong>Composer:</strong> ${score.composer}</div>
+                            <div class="score-info"><strong>Genre:</strong> ${score.genre}</div>
+                            <div class="score-info"><strong>Instrumentation:</strong> ${score.instrumentation}</div>
+                            <div class="score-info"><strong>Emotion:</strong> ${score.emotion || 'Not specified'}</div>
+                            <div class="score-info"><strong>Purchased:</strong> ${new Date(score.purchaseDate).toLocaleDateString()}</div>
+                            <div class="score-actions">
+                                <button class="btn btn-view" onclick="showImage('${filePath}', '${score.title}')">View Score</button>
+                                <button class="btn btn-delete" onclick="deleteScore(${score.scoreId})">Remove from Collection</button>
+                            </div>
+                        </div>
+                    `;
+                    scoresContainer.appendChild(scoreCard);
+                });
+            } catch (error) {
+                showToast('Error loading scores: ' + error.message, true);
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        
+        async function deleteScore(scoreId) {
+            if (!confirm('Are you sure you want to remove this score from your collection?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/purchases/${scoreId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to remove score');
+                }
+
+                showToast('Score removed from collection successfully');
+                loadPurchasedScores();
+            } catch (error) {
+                showToast('Error removing score: ' + error.message, true);
+            }
+        }
+
+        
+        function showImage(imagePath, title) {
+            modalImage.src = imagePath;
+            modalImage.alt = title;
+            modalImage.onerror = function() {
+                this.src = '/images/placeholder.png';
+            };
+            imageModal.style.display = 'block';
+        }
+
+        
+        function showToast(message, isError = false) {
+            toast.textContent = message;
+            toast.className = `toast ${isError ? 'error' : 'success'}`;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        
+        searchInput.addEventListener('input', function (e) {
+            const searchText = e.target.value.toLowerCase();
+            const scoreCards = document.getElementsByClassName('score-card');
+
+            Array.from(scoreCards).forEach(card => {
+                const title = card.querySelector('.score-title').textContent.toLowerCase();
+                const composer = card.querySelector('.score-info:nth-child(2)').textContent
+                    .toLowerCase();
+                const genre = card.querySelector('.score-info:nth-child(3)').textContent.toLowerCase();
+
+                if (title.includes(searchText) || composer.includes(searchText) || genre.includes(
+                        searchText)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        
+        document.querySelector('.modal-close').onclick = function () {
+            imageModal.style.display = 'none';
+        };
+
+        window.onclick = function (event) {
+            if (event.target === imageModal) {
+                imageModal.style.display = 'none';
+            }
+        };
+
+        
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    window.location.href = '/login.html';
+                }
+            } catch (err) {
+                console.error('Error during logout:', err);
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                window.location.href = '/login.html';
+            }
+        });
+
+        
+        loadPurchasedScores();
+    </script>
+</body>
+
+</html>

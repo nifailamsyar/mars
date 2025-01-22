@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+</head>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+        body {
+            font-family: "Montserrat", sans-serif;
+            background-image: url("bg2.jpg");
+            /* Use relative path */
+            background-size: cover;
+            /* Ensure the background covers the entire screen */
+            background-position: center;
+            /* Center the background image */
+            background-repeat: no-repeat;
+            /* Prevent the image from repeating */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Adding the black overlay */
+        body::before {
+            content: "";
+            /* Necessary for pseudo-elements */
+            position: absolute;
+            /* Position it absolutely within the body */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Black with 50% opacity */
+            z-index: 1;
+            /* Ensures the overlay is above the background but below other content */
+        }
+
+        .container {
+            z-index: 2;
+            /* Places the container above the overlay */
+
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .form-group input:focus {
+            border-color: #e75480;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(242, 102, 230, 0.25);
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #e75480;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .btn:hover {
+            background-color: #d14474;
+        }
+
+        .btn:active {
+            background-color: #e75480;
+        }
+
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .register-link a {
+            color: #00a478;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .loading:after {
+            content: "";
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required />
+                <div class="error" id="usernameError">Please enter your username</div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required />
+                <div class="error" id="passwordError">Please enter your password</div>
+            </div>
+            <button type="submit" class="btn" id="loginButton">Login</button>
+            <div class="loading" id="loading"></div>
+            <div class="message" id="message" style="display: none"></div>
+            <div class="register-link">
+                <a href="/index.html">Don't have an account? Register</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById("loginForm");
+        const messageDiv = document.getElementById("message");
+        const loadingDiv = document.getElementById("loading");
+        const loginButton = document.getElementById("loginButton");
+        const usernameError = document.getElementById("usernameError");
+        const passwordError = document.getElementById("passwordError");
+
+        
+        function setLoading(isLoading) {
+            loadingDiv.style.display = isLoading ? "block" : "none";
+            loginButton.disabled = isLoading;
+            loginButton.textContent = isLoading ? "Logging in..." : "Login";
+        }
+
+        
+        function showError(element, show) {
+            element.style.display = show ? "block" : "none";
+        }
+
+        
+        function showMessage(message, isError = false) {
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${isError ? "error" : "success"}`;
+            messageDiv.style.display = "block";
+        }
+
+        
+        form.username.addEventListener("input", function () {
+            showError(usernameError, !this.value.trim());
+        });
+
+        form.password.addEventListener("input", function () {
+            showError(passwordError, !this.value.trim());
+        });
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const username = form.username.value.trim();
+            const password = form.password.value.trim();
+
+            
+            if (!username || !password) {
+                showMessage("Please fill in all fields", true);
+                showError(usernameError, !username);
+                showError(passwordError, !password);
+                return;
+            }
+
+            setLoading(true);
+            messageDiv.style.display = "none";
+
+            try {
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Login response:", data); 
+                    console.log("User role:", data.user.role); 
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("role", data.user.role);
+                    showMessage("Login successful! Redirecting...", false);
+
+                    
+                    setTimeout(() => {
+                        if (data.user.role === "clerk") {
+                            window.location.href = "/clerkhome.html";
+                        } else if (data.user.role === "customer") {
+                            
+                            console.log("Redirecting customer with role:", data.user.role);
+                            window.location.href =
+                                "/customer-dashboard.html";
+                        } else {
+                            console.error("Unexpected user role:", data.user.role);
+                            showMessage("Unexpected user role. Please contact support.", true);
+                        }
+                    }, 1000);
+                } else {
+                    const error = await response.text();
+                    showMessage(error || "Invalid username or password", true);
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                showMessage("An error occurred. Please try again later.", true);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        
+        window.addEventListener("load", () => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                window.location.href = "/clerkhome.html";
+            }
+        });
+    </script>
+</body>
+
+</html>

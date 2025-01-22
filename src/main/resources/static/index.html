@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-image: url("bg1.jpg");
+        /* Use relative path */
+        background-size: cover;
+        /* Ensure the background covers the entire screen */
+        background-position: center;
+        /* Center the background image */
+        background-repeat: no-repeat;
+        /* Prevent the image from repeating */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      body::before {
+        content: "";
+        /* Necessary for pseudo-elements */
+        position: absolute;
+        /* Position it absolutely within the body */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Black with 50% opacity */
+        z-index: 1;
+        /* Ensures the overlay is above the background but below other content */
+      }
+
+      .container {
+        z-index: 2;
+        /* Places the container above the overlay */
+
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 300px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+        font-family: "Montserrat", sans-serif;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        font-family: "Montserrat", sans-serif;
+      }
+
+      .form-group input:focus {
+        border-color: #e75480;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(242, 102, 230, 0.25);
+      }
+
+      .error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #e75480;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-family: "Montserrat", sans-serif;
+      }
+
+      .btn:hover {
+        background-color: #d14474;
+      }
+
+      .btn:active {
+        background-color: #e75480;
+      }
+
+      .message {
+        margin-top: 1rem;
+        text-align: center;
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .login-link a {
+        color: #00a478;
+        text-decoration: none;
+      }
+
+      .login-link a:hover {
+        text-decoration: underline;
+      }
+
+      /* Custom Styling for Select */
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      .custom-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        color: #333;
+        appearance: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .custom-select:focus {
+        border-color: #e75480;
+        box-shadow: 0 0 0 2px rgba(242, 102, 230, 0.25);
+        outline: none;
+      }
+
+      .custom-select option {
+        padding: 10px;
+      }
+
+      .custom-select {
+        background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2012%206%22%3E%3Cpath%20d%3D%22M11%200L6%204L1%200%22%20fill%3D%22none%22%20stroke%3D%22%23333%22%20stroke-width%3D%22.7%22/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 12px;
+        padding-right: 30px;
+      }
+
+      .custom-select:focus {
+        border-color: #e75480;
+        outline: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Register to MARS</h1>
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            minlength="3"
+          />
+          <div class="error" id="usernameError">
+            Username must be at least 3 characters long
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+          <div class="error" id="emailError">
+            Please enter a valid email address
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            minlength="8"
+          />
+          <div class="error" id="passwordError">
+            Password must be at least 8 characters long
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="role" class="form-label">Role</label>
+          <select
+            id="role"
+            name="role"
+            required
+            class="form-control custom-select"
+          >
+            <option value="customer">Customer</option>
+            <option value="clerk">Clerk</option>
+          </select>
+        </div>
+        <button type="submit" class="btn">Register</button>
+        <div class="message" id="message" style="display: none"></div>
+        <div class="login-link">
+          <a href="/login.html">Already have an account? Login</a>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("registerForm");
+      const messageDiv = document.getElementById("message");
+      const usernameError = document.getElementById("usernameError");
+      const passwordError = document.getElementById("passwordError");
+      const emailError = document.getElementById("emailError");
+
+      
+      function isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+
+      
+      function showError(element, show) {
+        element.style.display = show ? "block" : "none";
+      }
+
+      
+      form.username.addEventListener("input", function () {
+        showError(usernameError, this.value.length < 3);
+      });
+
+      form.password.addEventListener("input", function () {
+        showError(passwordError, this.value.length < 8);
+      });
+
+      form.email.addEventListener("input", function () {
+        showError(emailError, !isValidEmail(this.value));
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        
+        if (
+          form.username.value.length < 3 ||
+          form.password.value.length < 8 ||
+          !isValidEmail(form.email.value)
+        ) {
+          messageDiv.textContent = "Please fix the errors before submitting.";
+          messageDiv.className = "message error";
+          messageDiv.style.display = "block";
+          return;
+        }
+
+        const formData = {
+          username: form.username.value,
+          password: form.password.value,
+          email: form.email.value,
+          role: form.role.value,
+        };
+
+        try {
+          const response = await fetch(
+            "/api/auth/register?role=" + formData.role,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+            }
+          );
+
+          const data = await response.text();
+          messageDiv.textContent = data;
+          messageDiv.style.display = "block";
+
+          if (response.ok) {
+            messageDiv.className = "message success";
+            form.reset();
+            
+            setTimeout(() => {
+              window.location.href = "/login.html";
+            }, 2000);
+          } else {
+            messageDiv.className = "message error";
+          }
+        } catch (err) {
+          console.error("Error:", err);
+          messageDiv.textContent = "An error occurred. Please try again later.";
+          messageDiv.className = "message error";
+          messageDiv.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

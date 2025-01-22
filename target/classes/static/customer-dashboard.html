@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Dashboard</title>
+  <style>
+    body {
+      font-family: "Montserrat", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    .navbar {
+      background-color: #e75480;
+      padding: 1rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar h1 {
+      margin: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .nav-links a:hover {
+      background-color: #00a478;
+    }
+
+    .nav-links a.active {
+      background-color: #00a478;
+    }
+
+    .logout-btn {
+      background-color: #00a478;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "Montserrat";
+    }
+
+    .logout-btn:hover {
+      background-color: #008c66;
+    }
+
+    .container {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .welcome-message {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .scores-section {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      font-family: "Montserrat", sans-serif;
+      padding: 0.5rem 1rem;
+      background-color: #e75480;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(231, 84, 128, 0.2);
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #e75480;
+      box-shadow: 0 0 0 2px rgba(242, 102, 230, 0.25);
+    }
+
+    .scores-table th:nth-child(1) {
+      width: 200px;
+      min-width: 200px;
+    }
+
+    .scores-table th:nth-child(2) {
+      width: 20%;
+    }
+
+    .scores-table th:nth-child(3) {
+      width: 15%;
+    }
+
+    .scores-table th:nth-child(4) {
+      width: 12%;
+    }
+
+    .scores-table th:nth-child(5) {
+      width: 15%;
+    }
+
+    .scores-table th:nth-child(6) {
+      width: 12%;
+    }
+
+    .scores-table th:nth-child(7) {
+      width: 12%;
+    }
+
+    .scores-table {
+      table-layout: fixed;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background-color: white;
+    }
+
+    .scores-table thead th {
+      background-color: #e75480;
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .scores-table thead th:hover {
+      background-color: #d14474;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .scores-table td,
+    .scores-table th {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 0;
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .scores-table tbody tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .score-image {
+      max-width: 200px;
+      max-height: 200px;
+      object-fit: contain;
+      cursor: pointer;
+      display: block;
+      margin: 0 auto;
+      padding: 5px;
+    }
+
+    .scores-table td:first-child {
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+      margin: 2% auto;
+      background-color: white;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .modal-image {
+      max-width: 100%;
+      max-height: 80vh;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+
+    .error-message {
+      color: #e75480;
+      padding: 1rem;
+      text-align: center;
+      display: none;
+    }
+
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+
+    .sortable:hover {
+      background-color: #e9ecef;
+    }
+
+    .sort-icon {
+      display: inline-block;
+      margin-left: 5px;
+      font-size: 0.8em;
+      opacity: 0.5;
+    }
+
+    .sort-active {
+      background-color: #e9ecef;
+    }
+
+    .sort-active .sort-icon {
+      opacity: 1;
+    }
+
+    .sort-asc .sort-icon::after {
+      content: "↑";
+    }
+
+    .sort-desc .sort-icon::after {
+      content: "↓";
+    }
+
+    .sort-none .sort-icon::after {
+      content: "↕";
+    }
+
+    .detail-modal-content {
+      display: flex;
+      gap: 2rem;
+      max-width: 90%;
+      max-height: 90vh;
+      margin: 2% auto;
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .detail-image-container {
+      flex: 1;
+      max-height: 85vh;
+      overflow: hidden;
+    }
+
+    .detail-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .detail-info {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .detail-field {
+      margin-bottom: 1rem;
+    }
+
+    .detail-field strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: #333;
+    }
+
+    .detail-field p {
+      margin: 0;
+      color: #666;
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .edit-btn {
+      background-color: #e75480;
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .edit-btn:hover {
+      background-color: #d14474;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 1rem 2rem;
+      background-color: #28a745;
+      color: white;
+      border-radius: 4px;
+      display: none;
+      z-index: 2000;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .toast.error {
+      background-color: #dc3545;
+    }
+
+    #username {
+      color: #00a478;
+    }
+
+    .toast.error {
+      background-color: #dc3545;
+    }
+
+    .btn-purchase {
+      background-color: #E75480;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.3s ease;
+      width: 200px;
+    }
+
+    .btn-purchase:hover {
+      background-color: #D14474;
+      transform: translateY(-2px);
+    }
+
+    .btn-purchase:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .purchase-message {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .purchase-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .purchase-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* Modal Background */
+    .confirmation-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      font-family: 'Montserrat', sans-serif;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Modal Content */
+    .confirmation-content {
+      position: relative;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      margin: 10% auto;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transform: scale(0.9);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    /* Modal Buttons Section */
+    .confirmation-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .confirmation-buttons .btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-confirm {
+      background-color: #E75480;
+      color: white;
+    }
+
+    .btn-cancel {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-confirm:hover {
+      background-color: #D14474;
+      transform: translateY(-3px);
+    }
+
+    .btn-cancel:hover {
+      background-color: #5a6268;
+      transform: translateY(-3px);
+    }
+
+    .score-preview-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      overflow: hidden;
+      background-color: black;
+    }
+
+    .score-preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-mask {
+      mask-image: linear-gradient(to bottom, black 50%, transparent 85%);
+      -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 85%);
+    }
+
+    .preview-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70%;
+      /* Increased height for better gradient */
+      background: linear-gradient(to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.8) 50%,
+          rgba(0, 0, 0, 0.95) 100%);
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 1rem;
+    }
+
+    .preview-badge {
+      text-transform: uppercase;
+      background-color: #00A478;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      z-index: 10;
+      font-weight: 600;
+    }
+
+    .detail-image-container {
+      position: relative;
+      flex: 1;
+      max-height: 85vh;
+      overflow: hidden;
+      background-color: white;
+    }
+
+    .detail-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .detail-image.preview-mask {
+      mask-image: linear-gradient(to bottom, black 50%, transparent 85%);
+      -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 85%);
+    }
+
+    .detail-image-container .preview-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70%;
+      background: linear-gradient(to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.8) 50%,
+          rgba(0, 0, 0, 0.95) 100%);
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 2rem;
+    }
+
+    .detail-image-container .preview-badge {
+      text-transform: uppercase;
+      background-color: #00A478;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      z-index: 10;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <h1>MARS : Music Archive and Repository System</h1>
+    <div class="nav-links">
+      <a href="/customer-dashboard.html" class="active">Homepage</a>
+      <a href="/customer-scores.html">My Scores</a>
+      <a href="/customer-profile.html">Manage Profile</a>
+    </div>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="container">
+    <div class="welcome-message">
+      <h2>Welcome to the MARS, <span id="username"></span></h2>
+      <p>
+        You're now logged in as a customer aboard the M.A.R.S mission.
+        Explore, purchase, and manage your collection of music scores.
+        Update your profile and unlock the full potential of M.A.R.S.
+      </p>
+    </div>
+
+    <div class="scores-section">
+      <h2>Available Scores</h2>
+      <p>
+        1. Click a column header to sort the table, or use the search bar to
+        find a music score.
+      </p>
+      <p>
+        2. Click on a music score image to view its details and perform
+        purchase actions.
+      </p>
+
+      <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput"
+          placeholder="Search by title, composer, genre, instrumentation or emotion.." />
+      </div>
+      <div id="scoresTableContainer">
+        <div id="loading" class="loading">Loading scores...</div>
+        <div id="errorMessage" class="error-message"></div>
+        <table class="scores-table" id="scoresTable" style="display: none">
+          <thead>
+            <tr>
+              <th>Preview</th>
+              <th class="sortable" data-field="title">
+                Title <span class="sort-icon"></span>
+              </th>
+              <th class="sortable" data-field="composer">
+                Composer <span class="sort-icon"></span>
+              </th>
+              <th class="sortable" data-field="genre">
+                Genre <span class="sort-icon"></span>
+              </th>
+              <th class="sortable" data-field="instrumentation">
+                Instrumentation <span class="sort-icon"></span>
+              </th>
+              <th class="sortable" data-field="emotion">
+                Emotion <span class="sort-icon"></span>
+              </th>
+              <th class="sortable" data-field="uploadDate">
+                Upload Date <span class="sort-icon"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="scoresTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Detail Modal -->
+  <div id="scoreDetailModal" class="modal">
+    <div class="detail-modal-content">
+      <div class="detail-image-container">
+        <img id="detailModalImage" class="detail-image" src="" alt="Score preview" />
+      </div>
+      <div class="detail-info">
+        <span class="modal-close" id="detailModalClose">&times;</span>
+        <h2>Score Details</h2>
+        <div class="detail-field">
+          <strong>Title</strong>
+          <p id="detailTitle"></p>
+        </div>
+        <div class="detail-field">
+          <strong>Composer</strong>
+          <p id="detailComposer"></p>
+        </div>
+        <div class="detail-field">
+          <strong>Genre</strong>
+          <p id="detailGenre"></p>
+        </div>
+        <div class="detail-field">
+          <strong>Instrumentation</strong>
+          <p id="detailInstrumentation"></p>
+        </div>
+        <div class="detail-field">
+          <strong>Emotion</strong>
+          <p id="detailEmotion"></p>
+        </div>
+        <div class="detail-field">
+          <strong>Upload Date</strong>
+          <p id="detailUploadDate"></p>
+        </div>
+        <div class="detail-actions">
+          <button class="btn btn-purchase" id="purchaseButton" onclick="purchaseScore()">
+            Purchase Score
+          </button>
+        </div>
+        <div id="purchaseMessage" class="purchase-message"></div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Keep the existing image modal -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="modalClose">&times;</span>
+      <img id="modalImage" class="modal-image" src="" alt="Score preview" />
+    </div>
+  </div>
+
+  <div id="confirmationModal" class="confirmation-modal">
+    <div class="confirmation-content">
+      <h3>Confirm Purchase</h3>
+      <p>Are you sure you want to purchase this score?</p>
+      <p id="confirmScoreTitle" style="font-weight: bold; margin: 1rem 0;"></p>
+      <div class="confirmation-buttons">
+        <button class="btn btn-cancel" onclick="closeConfirmationModal()">Cancel</button>
+        <button class="btn btn-confirm" onclick="confirmPurchase()">Confirm Purchase</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login.html";
+    }
+
+    
+    let currentSort = {
+      field: null,
+      direction: "none",
+    };
+
+    
+    let currentScoreId = null;
+    const scoreDetailModal = document.getElementById("scoreDetailModal");
+    const detailModalClose = document.getElementById("detailModalClose");
+    const toast = document.getElementById("toast");
+    const modal = document.getElementById("imageModal");
+
+    
+    document
+      .getElementById("logoutBtn")
+      .addEventListener("click", async () => {
+        try {
+          const response = await fetch("/api/auth/logout", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            localStorage.removeItem("token");
+            window.location.href = "/login.html";
+          }
+        } catch (err) {
+          console.error("Error during logout:", err);
+        }
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+      });
+
+    
+    async function fetchUserData() {
+      try {
+        const response = await fetch("/api/auth/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          document.getElementById("username").textContent = userData.username;
+        } else {
+          console.error("Error fetching user data:", response.status);
+          localStorage.removeItem("token");
+          window.location.href = "/login.html";
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+      }
+    }
+
+    async function fetchScores() {
+      const loading = document.getElementById("loading");
+      const errorMessage = document.getElementById("errorMessage");
+      const scoresTable = document.getElementById("scoresTable");
+      const scoresTableBody = document.getElementById("scoresTableBody");
+
+      try {
+        if (!currentSort.field) {
+          loading.style.display = "block";
+          scoresTable.style.display = "none";
+        }
+        errorMessage.style.display = "none";
+
+        const baseUrl = window.location.origin;
+        let apiUrl = `${baseUrl}/api/scores/all`;
+
+        if (currentSort.field && currentSort.direction !== "none") {
+          apiUrl += `?sortBy=${currentSort.field}&sortDirection=${currentSort.direction}`;
+        }
+
+        const response = await fetch(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const scores = await response.json();
+        scoresTableBody.innerHTML = "";
+
+        
+        for (const score of scores) {
+          
+          const purchaseResponse = await fetch(`/api/purchases/${score.id}/check`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          const purchaseData = await purchaseResponse.json();
+          const isPurchased = purchaseData.purchased;
+
+          const row = document.createElement("tr");
+
+          const filePath = score.filePath ?
+            `/uploads/${score.filePath}` :
+            "/images/placeholder.png";
+
+          row.innerHTML = `
+                <td>
+                    <div class="score-preview-container">
+                        <img src="${filePath}" 
+                             alt="Score preview" 
+                             class="score-preview-image ${isPurchased ? '' : 'preview-mask'}"
+                             onerror="this.src='/images/placeholder.png'"
+                             onclick="showScoreDetail(${score.id}, '${filePath}')">
+                        ${isPurchased ? '' : `
+                        <div class="preview-overlay">
+                            <span class="preview-badge">Preview Only</span>
+                        </div>
+                        `}
+                    </div>
+                </td>
+                <td>${score.title || "-"}</td>
+                <td>${score.composer || "-"}</td>
+                <td>${score.genre || "-"}</td>
+                <td>${score.instrumentation || "-"}</td>
+                <td>${score.emotion || "-"}</td>
+                <td>${new Date(score.uploadDate).toLocaleDateString()}</td>
+            `;
+          scoresTableBody.appendChild(row);
+        }
+
+        loading.style.display = "none";
+        scoresTable.style.display = "table";
+      } catch (error) {
+        console.error("Error fetching scores:", error);
+        loading.style.display = "none";
+        errorMessage.style.display = "block";
+        errorMessage.textContent = "Error loading scores. Please try again later.";
+      }
+    }
+    
+    document.querySelectorAll(".sortable").forEach((header) => {
+      header.addEventListener("click", () => {
+        const field = header.getAttribute("data-field");
+
+        if (currentSort.field === field) {
+          
+          currentSort.direction =
+            currentSort.direction === "asc" ?
+            "desc" :
+            currentSort.direction === "desc" ?
+            "none" :
+            "asc";
+        } else {
+          
+          currentSort.field = field;
+          currentSort.direction = "asc";
+        }
+
+        
+        document.querySelectorAll(".sortable").forEach((h) => {
+          h.classList.remove("sort-asc", "sort-desc", "sort-none");
+          if (h === header) {
+            h.classList.add(
+              currentSort.direction === "asc" ?
+              "sort-asc" :
+              currentSort.direction === "desc" ?
+              "sort-desc" :
+              "sort-none"
+            );
+          } else {
+            h.classList.add("sort-none");
+          }
+        });
+
+        
+        fetchScores();
+      });
+    });
+
+    async function showScoreDetail(scoreId, imagePath) {
+      try {
+        const response = await fetch(`/api/scores/${scoreId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch score details");
+        }
+
+        const data = await response.json();
+        const score = data.score;
+        currentScoreId = score.id;
+
+        const filePath = score.filePath ?
+          `/uploads/${score.filePath}` :
+          "/images/placeholder.png";
+
+        
+        const purchaseResponse = await fetch(`/api/purchases/${scoreId}/check`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const purchaseData = await purchaseResponse.json();
+        const isPurchased = purchaseData.purchased;
+
+        
+        const modalImage = document.getElementById("detailModalImage");
+        modalImage.src = filePath;
+        modalImage.className = `detail-image ${isPurchased ? '' : 'preview-mask'}`;
+
+        
+        const imageContainer = document.querySelector('.detail-image-container');
+        
+        const existingOverlay = imageContainer.querySelector('.preview-overlay');
+        if (existingOverlay) {
+          existingOverlay.remove();
+        }
+
+        
+        if (!isPurchased) {
+          const overlay = document.createElement('div');
+          overlay.className = 'preview-overlay';
+          overlay.innerHTML = '<span class="preview-badge">Purchase to View Full Score</span>';
+          imageContainer.appendChild(overlay);
+        }
+
+        document.getElementById("detailTitle").textContent = score.title;
+        document.getElementById("detailComposer").textContent = score.composer;
+        document.getElementById("detailGenre").textContent = score.genre;
+        document.getElementById("detailInstrumentation").textContent = score.instrumentation;
+        document.getElementById("detailEmotion").textContent = score.emotion || "-";
+        document.getElementById("detailUploadDate").textContent = new Date(score.uploadDate).toLocaleDateString();
+
+        
+        const purchaseButton = document.getElementById('purchaseButton');
+        if (purchaseButton) {
+          purchaseButton.disabled = isPurchased;
+          purchaseButton.textContent = isPurchased ? 'Already Purchased' : 'Purchase Score';
+        }
+
+        scoreDetailModal.style.display = "block";
+      } catch (error) {
+        console.error("Error fetching score details:", error);
+        showToast("Error loading score details", true);
+      }
+    }
+
+    
+    function showToast(message, isError = false) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.className = `toast${isError ? " error" : ""}`;
+      toast.style.display = "block";
+
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
+
+    
+    detailModalClose.onclick = function () {
+      scoreDetailModal.style.display = "none";
+    };
+
+    
+    window.onclick = function (event) {
+      if (event.target === scoreDetailModal) {
+        scoreDetailModal.style.display = "none";
+      }
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+
+    
+    document
+      .getElementById("searchInput")
+      .addEventListener("input", function (e) {
+        const searchText = e.target.value.toLowerCase();
+        const rows = document
+          .getElementById("scoresTableBody")
+          .getElementsByTagName("tr");
+
+        for (let row of rows) {
+          const title = row.cells[1].textContent.toLowerCase();
+          const composer = row.cells[2].textContent.toLowerCase();
+          const genre = row.cells[3].textContent.toLowerCase();
+          const instrumentation = row.cells[4].textContent.toLowerCase();
+          const emotion = row.cells[5].textContent.toLowerCase();
+
+          if (
+            title.includes(searchText) ||
+            composer.includes(searchText) ||
+            genre.includes(searchText) ||
+            instrumentation.includes(searchText) ||
+            emotion.includes(searchText)
+          ) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        }
+      });
+
+    
+    const confirmationModal = document.getElementById('confirmationModal');
+    let currentPurchaseScoreId = null;
+
+    function showPurchaseMessage(message, isError = false) {
+      const messageDiv = document.getElementById('purchaseMessage');
+      messageDiv.textContent = message;
+      messageDiv.className = `purchase-message ${isError ? 'error' : 'success'}`;
+      messageDiv.style.display = 'block';
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    async function checkPurchaseStatus(scoreId) {
+      try {
+        const response = await fetch(`/api/purchases/${scoreId}/check`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to check purchase status');
+        }
+
+        const data = await response.json();
+        const purchaseButton = document.getElementById('purchaseButton');
+
+        if (data.purchased) {
+          purchaseButton.disabled = true;
+          purchaseButton.textContent = 'Already Purchased';
+          showPurchaseMessage('You already own this score');
+        } else {
+          purchaseButton.disabled = false;
+          purchaseButton.textContent = 'Purchase Score';
+        }
+      } catch (error) {
+        console.error('Error checking purchase status:', error);
+      }
+    }
+
+    function purchaseScore() {
+      const scoreTitle = document.getElementById('detailTitle').textContent;
+      document.getElementById('confirmScoreTitle').textContent = scoreTitle;
+      confirmationModal.style.display = 'block';
+      currentPurchaseScoreId = currentScoreId;
+    }
+
+    async function confirmPurchase() {
+      try {
+        const response = await fetch(`/api/purchases/${currentPurchaseScoreId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        showToast('Score purchased successfully! View it in My Scores.');
+        closeConfirmationModal();
+
+        
+        const purchaseButton = document.getElementById('purchaseButton');
+        purchaseButton.disabled = true;
+        purchaseButton.textContent = 'Already Purchased';
+
+        
+        setTimeout(() => {
+          window.location.href = '/customer-scores.html';
+        }, 2000);
+      } catch (error) {
+        showToast(error.message || 'Error purchasing score', true);
+      }
+    }
+
+    function closeConfirmationModal() {
+      confirmationModal.style.display = 'none';
+      currentPurchaseScoreId = null;
+    }
+
+    async function showScoreDetail(scoreId, imagePath) {
+      try {
+        const response = await fetch(`/api/scores/${scoreId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch score details");
+        }
+
+        const data = await response.json();
+        const score = data.score;
+        currentScoreId = score.id;
+
+        
+        const purchaseResponse = await fetch(`/api/purchases/${scoreId}/check`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const purchaseData = await purchaseResponse.json();
+        const isPurchased = purchaseData.purchased;
+
+        const filePath = score.filePath ?
+          `/uploads/${score.filePath}` :
+          "/images/placeholder.png";
+
+        
+        const modalImage = document.getElementById("detailModalImage");
+        modalImage.src = filePath;
+        modalImage.className = `detail-image ${isPurchased ? '' : 'preview-mask'}`;
+
+        
+        const imageContainer = document.querySelector('.detail-image-container');
+        
+        const existingOverlay = imageContainer.querySelector('.preview-overlay');
+        if (existingOverlay) {
+          existingOverlay.remove();
+        }
+
+        
+        if (!isPurchased) {
+          const overlay = document.createElement('div');
+          overlay.className = 'preview-overlay';
+          overlay.innerHTML = '<span class="preview-badge">Purchase to View Full Score</span>';
+          imageContainer.appendChild(overlay);
+        }
+
+        
+        document.getElementById("detailTitle").textContent = score.title;
+        document.getElementById("detailComposer").textContent = score.composer;
+        document.getElementById("detailGenre").textContent = score.genre;
+        document.getElementById("detailInstrumentation").textContent = score.instrumentation;
+        document.getElementById("detailEmotion").textContent = score.emotion || "-";
+        document.getElementById("detailUploadDate").textContent = new Date(score.uploadDate).toLocaleDateString();
+
+        
+        const purchaseButton = document.getElementById('purchaseButton');
+        if (purchaseButton) {
+          purchaseButton.disabled = isPurchased;
+          purchaseButton.textContent = isPurchased ? 'Already Purchased' : 'Purchase Score';
+        }
+
+        scoreDetailModal.style.display = "block";
+      } catch (error) {
+        console.error("Error fetching score details:", error);
+        showToast("Error loading score details", true);
+      }
+    }
+
+
+    
+    fetchUserData();
+    fetchScores();
+  </script>
+</body>
+
+</html>

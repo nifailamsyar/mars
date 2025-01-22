@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+</head>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: "Montserrat", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .navbar {
+            background-color: #e75480;
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            margin: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #00a478;
+        }
+
+        .nav-links a.active {
+            background-color: #00a478;
+        }
+
+        .logout-btn {
+            background-color: #00a478;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: "Montserrat";
+        }
+
+        .logout-btn:hover {
+            background-color: #008c66;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome-message {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .scores-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            /* Centering the items */
+            font-family: "Montserrat", sans-serif;
+            padding: 0.5rem 1rem;
+            background-color: #e75480;
+            /* Light background to differentiate the search bar */
+            border-radius: 8px;
+            /* Rounded corners */
+            box-shadow: 0 2px 6px rgba(231, 84, 128, 0.2);
+            /* Pink box-shadow for depth */
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #e75480;
+            box-shadow: 0 0 0 2px rgba(242, 102, 230, 0.25);
+        }
+
+        /* Add fixed widths for table columns */
+        .scores-table th:nth-child(1) {
+            width: 200px;
+            min-width: 200px;
+        }
+
+        .scores-table th:nth-child(2) {
+            width: 20%;
+        }
+
+        .scores-table th:nth-child(3) {
+            width: 15%;
+        }
+
+        .scores-table th:nth-child(4) {
+            width: 12%;
+        }
+
+        .scores-table th:nth-child(5) {
+            width: 15%;
+        }
+
+        .scores-table th:nth-child(6) {
+            width: 12%;
+        }
+
+        .scores-table th:nth-child(7) {
+            width: 12%;
+        }
+
+        /* Table layout and styling */
+        .scores-table {
+            table-layout: fixed;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: white;
+            /* Add this to ensure table background is white */
+        }
+
+        /* Header specific styling */
+        .scores-table thead th {
+            /* Changed to be more specific with thead */
+            background-color: #e75480;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        /* Row hover effect - add this */
+        .scores-table thead th:hover {
+            background-color: #d14474;
+            /* Light gray hover effect */
+            cursor: pointer;
+            /* Changes cursor to pointer on hover */
+            transition: background-color 0.2s;
+            /* Smooth transition effect */
+        }
+
+        /* Table cell styling */
+        .scores-table td,
+        .scores-table th {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 0;
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Row hover effect */
+        .scores-table tbody tr:hover {
+            /* Added tbody to be more specific */
+            background-color: #f5f5f5;
+        }
+
+        /* Keep your existing image styling */
+        .score-image {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            padding: 5px;
+        }
+
+        /* First column styling */
+        .scores-table td:first-child {
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            margin: 2% auto;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .error-message {
+            color: #e75480;
+            padding: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        .sortable:hover {
+            background-color: #e9ecef;
+        }
+
+        .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 0.8em;
+            opacity: 0.5;
+        }
+
+        .sort-active {
+            background-color: #e9ecef;
+        }
+
+        .sort-active .sort-icon {
+            opacity: 1;
+        }
+
+        .sort-asc .sort-icon::after {
+            content: "↑";
+        }
+
+        .sort-desc .sort-icon::after {
+            content: "↓";
+        }
+
+        .sort-none .sort-icon::after {
+            content: "↕";
+        }
+
+        .detail-modal-content {
+            display: flex;
+            gap: 2rem;
+            max-width: 90%;
+            max-height: 90vh;
+            margin: 2% auto;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .detail-image-container {
+            flex: 1;
+            max-height: 85vh;
+            overflow: hidden;
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .detail-info {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .detail-field {
+            margin-bottom: 1rem;
+        }
+
+        .detail-field strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #333;
+        }
+
+        .detail-field p {
+            margin: 0;
+            color: #666;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .edit-btn {
+            background-color: #e75480;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .edit-btn:hover {
+            background-color: #d14474;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            display: none;
+            z-index: 2000;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .toast.error {
+            background-color: #dc3545;
+        }
+
+        #username {
+            color: #00a478;
+            /* Pink color for the username */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>MARS : Music Archive and Repository System</h1>
+        <div class="nav-links">
+            <a href="/clerkhome.html" class="active">Manage Score</a>
+            <a href="/upload-score.html">Upload Score</a>
+            <a href="/clerk-profile.html">Manage Profile</a>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="container">
+        <div class="welcome-message">
+            <h2>Welcome to the MARS, <span id="username"></span></h2>
+            <p>
+                You're logged in as a clerk. Ready to explore new musical worlds?
+                Manage the scores here or upload new ones using the navigation bar.
+                Don’t forget to update your profile – it’s your mission control center!
+            </p>
+        </div>
+
+        <div class="scores-section">
+            <h2>Uploaded Scores</h2>
+            <p>
+                1. Click a column header to sort the table, or use the search bar to
+                find a music score.
+            </p>
+            <p>
+                2. Click on a music score image to view its metadata or perform
+                further actions.
+            </p>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput"
+                    placeholder="Search by title, composer, genre, instrumentation or emotion.." />
+            </div>
+            <div id="scoresTableContainer">
+                <div id="loading" class="loading">Loading scores...</div>
+                <div id="errorMessage" class="error-message"></div>
+                <table class="scores-table" id="scoresTable" style="display: none">
+                    <thead>
+                        <tr>
+                            <th>Preview</th>
+                            <th class="sortable" data-field="title">
+                                Title <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-field="composer">
+                                Composer <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-field="genre">
+                                Genre <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-field="instrumentation">
+                                Instrumentation <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-field="emotion">
+                                Emotion <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-field="uploadDate">
+                                Upload Date <span class="sort-icon"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="scoresTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Detail Modal -->
+    <div id="scoreDetailModal" class="modal">
+        <div class="detail-modal-content">
+            <div class="detail-image-container">
+                <img id="detailModalImage" class="detail-image" src="" alt="Score preview" />
+            </div>
+            <div class="detail-info">
+                <span class="modal-close" id="detailModalClose">&times;</span>
+                <h2>Score Details</h2>
+                <div class="detail-field">
+                    <strong>Title</strong>
+                    <p id="detailTitle"></p>
+                </div>
+                <div class="detail-field">
+                    <strong>Composer</strong>
+                    <p id="detailComposer"></p>
+                </div>
+                <div class="detail-field">
+                    <strong>Genre</strong>
+                    <p id="detailGenre"></p>
+                </div>
+                <div class="detail-field">
+                    <strong>Instrumentation</strong>
+                    <p id="detailInstrumentation"></p>
+                </div>
+                <div class="detail-field">
+                    <strong>Emotion</strong>
+                    <p id="detailEmotion"></p>
+                </div>
+                <div class="detail-field">
+                    <strong>Upload Date</strong>
+                    <p id="detailUploadDate"></p>
+                </div>
+                <div class="detail-actions">
+                    <button class="edit-btn" onclick="editScore()">Edit Score</button>
+                    <button class="delete-btn" onclick="deleteScore()">
+                        Delete Score
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Keep the existing image modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <img id="modalImage" class="modal-image" src="" alt="Score preview" />
+        </div>
+    </div>
+
+    <script>
+        // Check if user is authenticated
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/login.html";
+        }
+
+        // Add this at the top with other state variables
+        let currentSort = {
+            field: null,
+            direction: "none",
+        };
+
+        // Add these new variables and functions
+        let currentScoreId = null;
+        const scoreDetailModal = document.getElementById("scoreDetailModal");
+        const detailModalClose = document.getElementById("detailModalClose");
+        const toast = document.getElementById("toast");
+        const modal = document.getElementById("imageModal");
+
+        // Handle logout
+        document
+            .getElementById("logoutBtn")
+            .addEventListener("click", async () => {
+                try {
+                    const response = await fetch("/api/auth/logout", {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    if (response.ok) {
+                        localStorage.removeItem("token");
+                        window.location.href = "/login.html";
+                    }
+                } catch (err) {
+                    console.error("Error during logout:", err);
+                }
+                localStorage.removeItem("token");
+                window.location.href = "/login.html";
+            });
+
+        // Fetch user data
+        async function fetchUserData() {
+            try {
+                const response = await fetch("/api/auth/user", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.ok) {
+                    const userData = await response.json();
+                    document.getElementById("username").textContent = userData.username;
+                } else {
+                    console.error("Error fetching user data:", response.status);
+                    localStorage.removeItem("token");
+                    window.location.href = "/login.html";
+                }
+            } catch (err) {
+                console.error("Error fetching user data:", err);
+                localStorage.removeItem("token");
+                window.location.href = "/login.html";
+            }
+        }
+
+        async function fetchScores() {
+            const loading = document.getElementById("loading");
+            const errorMessage = document.getElementById("errorMessage");
+            const scoresTable = document.getElementById("scoresTable");
+            const scoresTableBody = document.getElementById("scoresTableBody");
+
+            try {
+                if (!currentSort.field) {
+                    loading.style.display = "block";
+                    scoresTable.style.display = "none";
+                }
+                errorMessage.style.display = "none";
+
+                const baseUrl = window.location.origin;
+                let apiUrl = `${baseUrl}/api/scores/all`;
+
+                if (currentSort.field && currentSort.direction !== "none") {
+                    apiUrl += `?sortBy=${currentSort.field}&sortDirection=${currentSort.direction}`;
+                }
+
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const scores = await response.json();
+                scoresTableBody.innerHTML = "";
+
+                scores.forEach((score) => {
+                    const row = document.createElement("tr");
+
+                    const filePath = score.filePath ?
+                        `/uploads/${score.filePath}` :
+                        "/images/placeholder.png";
+
+                    row.innerHTML = `
+                <td>
+                    <img src="${filePath}" 
+                         alt="Score preview" 
+                         class="score-image"
+                         onerror="this.src='/images/placeholder.png'"
+                         onclick="showScoreDetail(${score.id}, '${filePath}')">
+                </td>
+                <td>${score.title || "-"}</td>
+                <td>${score.composer || "-"}</td>
+                <td>${score.genre || "-"}</td>
+                <td>${score.instrumentation || "-"}</td>
+                <td>${score.emotion || "-"}</td>
+                <td>${new Date(score.uploadDate).toLocaleDateString()}</td>
+            `;
+                    scoresTableBody.appendChild(row);
+                });
+
+                loading.style.display = "none";
+                scoresTable.style.display = "table";
+            } catch (error) {
+                console.error("Error fetching scores:", error);
+                loading.style.display = "none";
+                errorMessage.style.display = "block";
+                errorMessage.textContent =
+                    "Error loading scores. Please try again later.";
+            }
+        }
+
+        document.querySelectorAll(".sortable").forEach((header) => {
+            header.addEventListener("click", () => {
+                const field = header.getAttribute("data-field");
+
+                if (currentSort.field === field) {
+                    currentSort.direction =
+                        currentSort.direction === "asc" ?
+                        "desc" :
+                        currentSort.direction === "desc" ?
+                        "none" :
+                        "asc";
+                } else {
+                    currentSort.field = field;
+                    currentSort.direction = "asc";
+                }
+
+                document.querySelectorAll(".sortable").forEach((h) => {
+                    h.classList.remove("sort-asc", "sort-desc", "sort-none");
+                    if (h === header) {
+                        h.classList.add(
+                            currentSort.direction === "asc" ?
+                            "sort-asc" :
+                            currentSort.direction === "desc" ?
+                            "sort-desc" :
+                            "sort-none"
+                        );
+                    } else {
+                        h.classList.add("sort-none");
+                    }
+                });
+
+                fetchScores();
+            });
+        });
+
+        async function showScoreDetail(scoreId, imagePath) {
+            try {
+                const response = await fetch(`/api/scores/${scoreId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch score details");
+                }
+
+                const data = await response.json();
+                const score = data.score;
+                currentScoreId = score.id;
+
+                const filePath = score.filePath ?
+                    `/uploads/${score.filePath}` :
+                    "/images/placeholder.png";
+
+                document.getElementById("detailModalImage").src = filePath;
+                document.getElementById("detailTitle").textContent = score.title;
+                document.getElementById("detailComposer").textContent =
+                    score.composer;
+                document.getElementById("detailGenre").textContent = score.genre;
+                document.getElementById("detailInstrumentation").textContent =
+                    score.instrumentation;
+                document.getElementById("detailEmotion").textContent =
+                    score.emotion || "-";
+                document.getElementById("detailUploadDate").textContent = new Date(
+                    score.uploadDate
+                ).toLocaleDateString();
+
+                scoreDetailModal.style.display = "block";
+            } catch (error) {
+                console.error("Error fetching score details:", error);
+                showToast("Error loading score details", true);
+            }
+        }
+
+        async function deleteScore() {
+            if (
+                !currentScoreId ||
+                !confirm(
+                    "Are you sure you want to delete this score? This action cannot be undone."
+                )
+            ) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/scores/${currentScoreId}`, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete score");
+                }
+
+                scoreDetailModal.style.display = "none";
+                showToast("Score deleted successfully");
+                fetchScores(); 
+            } catch (error) {
+                console.error("Error deleting score:", error);
+                showToast("Error deleting score", true);
+            }
+        }
+
+        function editScore() {
+            if (currentScoreId) {
+                window.location.href = `/catalog-score.html?id=${currentScoreId}`;
+            }
+        }
+
+        async function updateScore(scoreId) {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "/login.html";
+                return;
+            }
+
+            
+            const title = document.getElementById("title").value;
+            const composer = document.getElementById("composer").value;
+            const genre = document.getElementById("genre").value;
+            const instrumentation =
+                document.getElementById("instrumentation").value;
+            const emotion = document.getElementById("emotion").value;
+
+            
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("composer", composer);
+            formData.append("genre", genre);
+            formData.append("instrumentation", instrumentation);
+            formData.append("emotion", emotion);
+
+            try {
+                const response = await fetch(`/api/scores/${scoreId}`, {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                showToast("Score updated successfully");
+
+                
+                setTimeout(() => {
+                    window.location.href = "/clerkhome.html";
+                }, 1500);
+            } catch (error) {
+                console.error("Error updating score:", error);
+                showToast("Error updating score: " + error.message, true);
+            }
+        }
+
+        
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+            if (!toast) return;
+
+            toast.textContent = message;
+            toast.className = `toast${isError ? " error" : ""}`;
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        
+        async function loadScoreData(scoreId) {
+            try {
+                const response = await fetch(`/api/scores/${scoreId}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const score = await response.json();
+
+                
+                document.getElementById("title").value = score.title || "";
+                document.getElementById("composer").value = score.composer || "";
+                document.getElementById("genre").value = score.genre || "";
+                document.getElementById("instrumentation").value =
+                    score.instrumentation || "";
+                document.getElementById("emotion").value = score.emotion || "";
+            } catch (error) {
+                console.error("Error loading score data:", error);
+                showToast("Error loading score data: " + error.message, true);
+            }
+        }
+
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const scoreId = urlParams.get("id");
+
+            if (scoreId) {
+                
+                loadScoreData(scoreId);
+
+                
+                const form = document.querySelector("form");
+                if (form) {
+                    form.onsubmit = (e) => {
+                        e.preventDefault();
+                        updateScore(scoreId);
+                    };
+                }
+            }
+        });
+
+        function showToast(message, isError = false) {
+            toast.textContent = message;
+            toast.className = `toast${isError ? " error" : ""}`;
+            toast.style.display = "block";
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        
+        detailModalClose.onclick = function () {
+            scoreDetailModal.style.display = "none";
+        };
+
+        
+        window.onclick = function (event) {
+            if (event.target === scoreDetailModal) {
+                scoreDetailModal.style.display = "none";
+            }
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        
+        document
+            .getElementById("searchInput")
+            .addEventListener("input", function (e) {
+                const searchText = e.target.value.toLowerCase();
+                const rows = document
+                    .getElementById("scoresTableBody")
+                    .getElementsByTagName("tr");
+
+                for (let row of rows) {
+                    const title = row.cells[1].textContent.toLowerCase();
+                    const composer = row.cells[2].textContent.toLowerCase();
+                    const genre = row.cells[3].textContent.toLowerCase();
+                    const instrumentation = row.cells[4].textContent.toLowerCase();
+                    const emotion = row.cells[5].textContent.toLowerCase();
+
+                    if (
+                        title.includes(searchText) ||
+                        composer.includes(searchText) ||
+                        genre.includes(searchText) ||
+                        instrumentation.includes(searchText) ||
+                        emotion.includes(searchText)
+                    ) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+
+        
+        fetchUserData();
+        fetchScores();
+    </script>
+</body>
+
+</html>
